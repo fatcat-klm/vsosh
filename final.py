@@ -26,7 +26,7 @@ with st.echo(code_location='below'):
         return df
 
 
-    df = get_data(600)
+    df = get_data(500)
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
     st.markdown("### Что-то про  шоколад")
@@ -127,6 +127,7 @@ with st.echo(code_location='below'):
         df_new = df.copy(deep=True)
 
         st.write(df_new['lat'])
+        st.write(df_new['lon'])
 
         df_new['coords'] = df_new[['lat', 'lon']].apply(lambda x: get_coords(*x), axis=1)
         df_new = df_new.drop(['coords'], axis=1).copy(deep=True)
