@@ -111,7 +111,16 @@ with st.echo(code_location='below'):
 
 
     dist = get_distance()
-    df_new=df
+
+
+    @st.cache(persist=True, show_spinner=True)
+    def get_dist(rows):
+        data_url = (
+            "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
+        df = pd.read_csv(data_url, nrows=rows)
+        return df
+
+    df_new = get_dist(50000)
     df_new['distance_from_center'] = dist
 
     punk = df_new['distance_from_center'].to_numpy()
