@@ -3,12 +3,10 @@ import folium as folium
 from folium.plugins import FastMarkerCluster
 import streamlit as st
 import pandas as pd
-from streamlit_folium import st_folium, folium_static
 import numpy as np
 import seaborn as sns
 from geopy import distance
 from shapely.geometry import Point
-import networkx as nx
 
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
@@ -37,7 +35,7 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
         st.write(df)
-    df1 = df
+    df1 = df.copy(deep=True)
 
     if st.checkbox("Построим рейтинг по странам проихзводителям", False):
         st.subheader('Рейтинг')
