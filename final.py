@@ -120,7 +120,6 @@ with st.echo(code_location='below'):
         distance_from_c = []
         for lat, long in zip(df['lat'], df['long']):
             distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
-            # geometry.append(Point(lon, lat))
         return pd.Series(distance_from_c)
 
 
@@ -129,10 +128,3 @@ with st.echo(code_location='below'):
 
     punk = df['distance_from_center'].to_numpy()
     st.write(punk)
-
-
-    def get_coords(lat, long):
-        return Point(long, lat)
-
-
-    
