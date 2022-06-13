@@ -110,6 +110,12 @@ with st.echo(code_location='below'):
     def get_coords(lat, lon):
         return Point(lon, lat)
 
+
+    @st.experimental_singleton()
+    def final_df():
+        d = df.drop(['coords'], axis=1).copy(deep=True)
+        return d
+    df_new = final_df()
     if st.checkbox("Показать геоданные", False):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
