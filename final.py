@@ -24,7 +24,6 @@ with st.echo(code_location='below'):
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
-
     df = get_data(50000)
 
     st.sidebar.subheader('Описание параметров датасета')
@@ -48,6 +47,7 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
         st.write(df)
+
     if st.checkbox("Сколько в школе приезров/победителей", False):
         st.subheader('Рейтинг')
         dict1 = df.groupby('ShortName').aggregate(np.sum)['Add'].to_dict()
