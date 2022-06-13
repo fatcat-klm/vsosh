@@ -1,12 +1,4 @@
-from geopy.extra.rate_limiter import RateLimiter
 import matplotlib
-import seaborn as sns
-import streamlit as st
-import pandas as pd
-import seaborn as sns
-import altair as alt
-from geopy import distance
-from typing import Union, Any
 import folium as folium
 from folium.plugins import MarkerCluster, FastMarkerCluster
 import streamlit as st
@@ -14,7 +6,6 @@ import pandas as pd
 from streamlit_folium import st_folium, folium_static
 import numpy as np
 import seaborn as sns
-import matplotlib.pyplot as plt
 import altair as alt
 import geopandas
 from geopy import distance
@@ -29,9 +20,7 @@ with st.echo(code_location='below'):
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
         data_url = (
-            "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20"
-            "-%20winners%20-%20moscow%20schools%20-%20winners%20("
-            "2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
+            "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
@@ -116,7 +105,6 @@ with st.echo(code_location='below'):
 
     @st.cache()
     def get_distance():
-        # Добавляем расстояние до центра Москвы
         distance_from_c = []
         for lat, long in zip(df['lat'], df['long']):
             distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
@@ -124,9 +112,10 @@ with st.echo(code_location='below'):
 
 
     dist = get_distance()
-    df['distance_from_center'] = dist
+    df_new=df
+    df_new['distance_from_center'] = dist
 
-    punk = df['distance_from_center'].to_numpy()
+    punk = df_new['distance_from_center'].to_numpy()
     best_solution = np.mean(punk)
     st.write(best_solution)
 
@@ -135,11 +124,10 @@ with st.echo(code_location='below'):
         return Point(long, lat)
 
 
-    df['coords'] = df[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
+    df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
 
     m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
-    FastMarkerCluster(
-        data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]).add_to(m)
+    FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
 
     folium_static(m)
 
