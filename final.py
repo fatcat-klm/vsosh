@@ -94,11 +94,8 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
 
-    st.markdown(" ### Строим граф")
-    if st.checkbox("граф", False):
-        st.subheader('граф')
-        df1 = df[['Specific Bean Origin or Bar Name', 'Company Location']]
-        G = nx.Graph()
-        G = nx.from_pandas_edgelist(df1,'Specific Bean Origin or Bar Name', 'Company Location')
-        figure(figsize=(10, 8))
-        nx.draw_shell(G, with_labels=True)
+    df1 = df[['Specific Bean Origin or Bar Name', 'Company Location']]
+    G = nx.Graph()
+    G = nx.from_pandas_edgelist(df1, 'Specific Bean Origin or Bar Name', 'Company Location')
+    figure(figsize=(10, 8))
+    nx.draw_shell(G, with_labels=True)
