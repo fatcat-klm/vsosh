@@ -35,7 +35,7 @@ with st.echo(code_location='below'):
     st.markdown(
         "Проанализировав различные характеристики датасета вы сможете выявить интересные зависимости рейтинга. Например, из каких бобов производят самый вкусный шоколад. "
     )
-    st.title(" ### Приступить к анализу данных")
+    st.title(" Приступить к анализу данных")
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
         st.write(df)
@@ -74,22 +74,6 @@ with st.echo(code_location='below'):
         "Не расстраивайтесь, если при построении выдается ошибка. Формат выбранного параметра не подходит для построения графика такого типа. Выберите другой"
     )
 
-    if st.sidebar.checkbox('Count Plot'):
-        st.subheader('Count Plot')
-        column_count_plot_x = st.sidebar.selectbox(
-            "Х Подходят только числовые значения: ", df.columns
-        )
-        column_count_plot_y = st.sidebar.selectbox(
-            "Y дополнительная переменная:", df.columns.insert(0, None)
-        )
-        fig = sns.countplot(
-            x=column_count_plot_x,
-            hue=column_count_plot_y,
-            data=df,
-            palette="husl",
-            labels=[df.columns.insert(0, None)],
-        )
-        st.pyplot()
     if st.sidebar.checkbox('Boxplot'):
         st.subheader('Boxplot')
         column_box_plot_X = st.sidebar.selectbox("X Подходят только числовые значения:", df.columns)
@@ -106,6 +90,24 @@ with st.echo(code_location='below'):
             labels=[df.columns.insert(0, None)],
         )
         st.pyplot()
+
+    if st.sidebar.checkbox('Count Plot'):
+        st.subheader('Count Plot')
+        column_count_plot_x = st.sidebar.selectbox(
+            "Х Подходят только числовые значения: ", df.columns
+        )
+        column_count_plot_y = st.sidebar.selectbox(
+            "Y:", df.columns.insert(0, None)
+        )
+        fig = sns.countplot(
+            x=column_count_plot_x,
+            hue=column_count_plot_y,
+            data=df,
+            palette="husl",
+            labels=[df.columns.insert(0, None)],
+        )
+        st.pyplot()
+
     if st.sidebar.checkbox('Distplot'):
         st.subheader('Distplot')
         column_dist_plot = st.sidebar.selectbox("Подходят только числовые значения:", df.columns)
@@ -149,3 +151,4 @@ with st.echo(code_location='below'):
             data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]
         ).add_to(m)
         folium_static(m)
+        st.title("Исходный код")
