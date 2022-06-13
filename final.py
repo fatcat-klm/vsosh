@@ -102,32 +102,3 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
-
-    @st.cache()
-    def get_distance():
-        distance_from_c = []
-        for lat, long in zip(df['lat'], df['long']):
-            distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
-        return pd.Series(distance_from_c)
-
-
-    dist = get_distance()
-    df_new=df
-    df_new['distance_from_center'] = dist
-
-    punk = df_new['distance_from_center'].to_numpy()
-    best_solution = np.mean(punk)
-    st.write(best_solution)
-
-
-    def get_coords(lat, long):
-        return Point(long, lat)
-
-
-    df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
-
-    m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
-    FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
-
-    folium_static(m)
-
