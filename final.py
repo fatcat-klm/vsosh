@@ -93,8 +93,8 @@ with st.echo(code_location='below'):
         st.pyplot()
     st.sidebar.markdown(
         "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
-
-    df2 = df1[['Specific Bean Origin or Bar Name', 'Company Location']]
+    df2 = df1.copy(deep=True)
+    df2 = df2[['Specific Bean Origin or Bar Name', 'Company Location']]
     G = nx.Graph()
     G = nx.from_pandas_edgelist(df2, 'Specific Bean Origin or Bar Name', 'Company Location')
     figure(figsize=(10, 8))
