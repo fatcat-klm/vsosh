@@ -48,10 +48,18 @@ with st.echo(code_location='below'):
         st.subheader('Датасет')
         st.write(df)
 
-    if st.checkbox("Сколько в школе приезров/победителей", False):
+    if st.checkbox("Сколько в школе призеров/победителей", False):
         st.subheader('Рейтинг')
         dict1 = df.groupby('ShortName').aggregate(np.sum)['Add'].to_dict()
-        st.write(dict1)
+        sorted_values = sorted(dict1.values())
+        new_sorted_dict = {}
+        for i in sorted_values:
+            for j in dict1.keys():
+                if dict1[j] == i:
+                    new_sorted_dict[j] = dict1[j]
+                    break
+        st.write(new_sorted_dict)
+
     st.title('Описание параметров датасета')
     if st.sidebar.checkbox('Формат данных'):
         st.subheader('Формат данных:')
