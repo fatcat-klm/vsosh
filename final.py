@@ -135,10 +135,4 @@ with st.echo(code_location='below'):
         return Point(long, lat)
 
 
-    df['coords'] = df[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
-
-    m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
-    FastMarkerCluster(
-        data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]).add_to(m)
-
-    folium_static(m)
+    
