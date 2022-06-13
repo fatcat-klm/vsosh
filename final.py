@@ -1,4 +1,4 @@
-import geopy.extra.rate_limiter
+from geopy.extra.rate_limiter import RateLimiter
 import geopy.geocoders
 import matplotlib
 import pandas as pd
@@ -94,19 +94,10 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
-    locat = ['Coorg, Karnataka', 'Khajjiar, Himachal Pradesh', \
-             'Chail, Himachal Pradesh', 'Pithoragarh, Uttarakhand', 'Munnar, Kerala']
-
-    df_new = pd.DataFrame({'add': locat})
-
-    # Creating an instance of Nominatim Class
+    df_new = df
     geolocator = geopy.geocoders.Nominatim(user_agent="my_request")
-
-    # applying the rate limiter wrapper
-    geocode = geopy.extra.rate_limiter(geolocator.geocode, min_delay_seconds=1)
-
-    # Applying the method to pandas DataFrame
-    df_new['location'] = df_new['add'].apply(geocode)
+    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+    df_new['location'] = df_new['ShortName'].apply(geocode)
     df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
     df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
     st.write(df_new)
