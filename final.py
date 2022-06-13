@@ -1,4 +1,4 @@
-import matplotlib 
+import matplotlib
 import matplotlib.pyplot as plt
 import folium as folium
 import streamlit as st
@@ -18,14 +18,11 @@ with st.echo(code_location='below'):
     matplotlib.use("Agg")
     st.set_option('deprecation.showPyplotGlobalUse', False)
 
-
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
-        data_url = (
-            "https://github.com/fatcat-klm/vsosh/raw/main/flavors_of_cacao%20(2)%20-%20flavors_of_cacao%20(2)%20(3).csv.zip")
+        data_url = "https://github.com/fatcat-klm/vsosh/raw/main/flavors_of_cacao%20(2)%20-%20flavors_of_cacao%20(2)%20(3).csv.zip"
         df = pd.read_csv(data_url, nrows=rows)
         return df
-
 
     df = get_data(1790)
     st.sidebar.subheader('Описание параметров датасета')
@@ -35,7 +32,8 @@ with st.echo(code_location='below'):
     if st.button("🎈"):
         st.balloons()
     st.markdown(
-        "Проанализировав различные характеристики датасета вы сможете выявить зависимости. Например,чего-то там")
+        "Проанализировав различные характеристики датасета вы сможете выявить зависимости. Например,чего-то там"
+    )
     st.markdown(" ### Приступить к анализу данных")
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
@@ -65,24 +63,43 @@ with st.echo(code_location='below'):
         st.subheader('Статистически описываемые данные')
         st.write(df.describe())
     st.title('Анализировать данные')
-    st.sidebar.markdown("## Меняйте параметры модели, чтобы создать интересующие вас визуализации данных")
+    st.sidebar.markdown(
+        "## Меняйте параметры модели, чтобы создать интересующие вас визуализации данных"
+    )
     st.info(
-        "Если при построении выдается ошибка, то формат выбранного параметра не подходит для построения графика такого типа. Выберите другой")
+        "Если при построении выдается ошибка, то формат выбранного параметра не подходит для построения графика такого типа. Выберите другой"
+    )
     if st.sidebar.checkbox('Count Plot'):
         st.subheader('Count Plot')
-        column_count_plot_x = st.sidebar.selectbox("Х Подходят только числовые значения: ", df.columns)
-        column_count_plot_y = st.sidebar.selectbox("Y дополнительная переменная:",
-                                                   df.columns.insert(0, None))
-        fig = sns.countplot(x=column_count_plot_x, hue=column_count_plot_y, data=df, palette="husl",
-                            labels=[df.columns.insert(0, None)])
+        column_count_plot_x = st.sidebar.selectbox(
+            "Х Подходят только числовые значения: ", df.columns
+        )
+        column_count_plot_y = st.sidebar.selectbox(
+            "Y дополнительная переменная:", df.columns.insert(0, None)
+        )
+        fig = sns.countplot(
+            x=column_count_plot_x,
+            hue=column_count_plot_y,
+            data=df,
+            palette="husl",
+            labels=[df.columns.insert(0, None)],
+        )
         st.pyplot()
     if st.sidebar.checkbox('Boxplot'):
         st.subheader('Boxplot')
         column_box_plot_X = st.sidebar.selectbox("X Подходят только числовые значения:", df.columns)
         column_box_plot_Y = st.sidebar.selectbox("Y: ", df.columns.insert(0, None))
-        column_box_plot_Z = st.sidebar.selectbox("Z дополнительная переменная:", df.columns.insert(0, None))
-        fig = sns.boxplot(x=column_box_plot_X, y=column_box_plot_Y, hue=column_box_plot_Z, data=df, palette="husl",
-                          labels=[df.columns.insert(0, None)])
+        column_box_plot_Z = st.sidebar.selectbox(
+            "Z дополнительная переменная:", df.columns.insert(0, None)
+        )
+        fig = sns.boxplot(
+            x=column_box_plot_X,
+            y=column_box_plot_Y,
+            hue=column_box_plot_Z,
+            data=df,
+            palette="husl",
+            labels=[df.columns.insert(0, None)],
+        )
         st.pyplot()
     if st.sidebar.checkbox('Distplot'):
         st.subheader('Distplot')
@@ -95,13 +112,14 @@ with st.echo(code_location='below'):
         fig = sns.pairplot(df, hue=column_pair_plot, palette="husl")
         st.pyplot()
     st.sidebar.markdown(
-        "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
+        "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)"
+    )
 
     st.markdown("Граф")
     if st.checkbox("Показать граф", False):
         df2 = df.copy(deep=True)
         df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
-        df3 = df3.groupby(['Company_Location']).mean()
+        df3 = df3.groupby(['Specific_Bean_Origin', 'Company_Location'], as_index=False)
         G = nx.Graph()
         G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
         # figure(figsize=(10, 8))
@@ -111,19 +129,16 @@ with st.echo(code_location='below'):
 
     st.title('Геоданные')
 
-
     def get_coords(lat, lon):
         try:
             return Point(lon, lat)
         except Exception as e:
             raise ValueError('get_coords: {} {}'.format(lat, lon))
 
-
     @st.experimental_singleton()
     def final_df():
         d = df.drop(['coords'], axis=1).copy(deep=True)
         return d
-
 
     if st.checkbox("Показать геоданные", False):
         st.subheader('Геоданные')
@@ -133,5 +148,7 @@ with st.echo(code_location='below'):
         # st.write(df_new['lon'])
 
         m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
-        FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]).add_to(m)
+        FastMarkerCluster(
+            data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]
+        ).add_to(m)
         folium_static(m)
