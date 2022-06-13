@@ -27,8 +27,8 @@ with st.echo(code_location='below'):
     df = get_data(1790)
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
-    st.markdown("### ")
-    img_1 = "https://github.com/fatcat-klm/vsosh/blob/main/e65ea183f8fac51d87ac25e68176f1b9.jpg"
+    st.title("### Рейтинг шоколада по данным Британских учёных")
+    img_1 = "https://github.com/fatcat-klm/vsosh/blob/main/e65ea183f8fac51d87ac25e68176f1b9.jpg?raw=true"
     st.image(img_1, width=500)
     st.markdown("Все больше и больше людей сейчас переезжает из России в другие страны. При миграциии люди сталкиваются с неожиданными проблемами. Например, какой шоколад есть в Америке, если родненькой 'Алёнки' нет на прилавке? Преисполниться и узнать все о рейтинге различного шоколада вам поможет этот проект! ")
     if st.button("Я уеду жить в Лондон🎈"):
@@ -42,7 +42,7 @@ with st.echo(code_location='below'):
         st.write(df)
     df1 = df.copy(deep=True)
 
-    if st.checkbox("Построим рейтинг по странам проихзводителям", False):
+    if st.checkbox("Построить рейтинг по странам проихзводителям", False):
         st.subheader('Рейтинг')
         dict1 = df1.groupby('Company').aggregate(np.sum)['Add'].to_dict()
         sorted_values = sorted(dict1.values())
@@ -139,16 +139,11 @@ with st.echo(code_location='below'):
         except Exception as e:
             raise ValueError('get_coords: {} {}'.format(lat, lon))
 
-    @st.experimental_singleton()
-    def final_df():
-        d = df.drop(['coords'], axis=1).copy(deep=True)
-        return d
-
     if st.checkbox("Показать геоданные", False):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
 
-        m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
+        m = folium.Map(location=[49.867124, 9.692097], zoom_start=100)
         FastMarkerCluster(
             data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]
         ).add_to(m)
