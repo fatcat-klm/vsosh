@@ -8,6 +8,7 @@ import numpy as np
 import seaborn as sns
 from geopy import distance
 from shapely.geometry import Point
+import networkx as nx
 
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
@@ -36,10 +37,11 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
         st.write(df)
+    df1 = df
 
     if st.checkbox("Построим рейтинг по странам проихзводителям", False):
         st.subheader('Рейтинг')
-        dict1 = df.groupby('Company').aggregate(np.sum)['Add'].to_dict()
+        dict1 = df1.groupby('Company').aggregate(np.sum)['Add'].to_dict()
         sorted_values = sorted(dict1.values())
         new_sorted_dict = {}
         for i in sorted_values:
@@ -91,5 +93,3 @@ with st.echo(code_location='below'):
         st.pyplot()
     st.sidebar.markdown(
         "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
-
-
