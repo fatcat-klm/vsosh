@@ -1,10 +1,9 @@
-import streamlit as st
-import pandas as pd
-from geopy.geocoders import Nominatim
-from geopy.extra.rate_limiter import RateLimiter
-from PIL import Image
+import geopy.extra.rate_limiter
+import geopy.geocoders
 import matplotlib
+import pandas as pd
 import seaborn as sns
+import streamlit as st
 
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
@@ -14,7 +13,9 @@ with st.echo(code_location='below'):
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
         data_url = (
-            "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
+            "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20"
+            "-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20("
+            "2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
@@ -94,22 +95,17 @@ with st.echo(code_location='below'):
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
 
-    @st.cache(persist=True, show_spinner=True)
-    def get_address(rows):
-        locat = df.query('df_ShortName')
-        df_new = pd.DataFrame({'add': locat})
+    locat = df.query('df_ShortName')
+    df_new = pd.DataFrame({'add': locat})
 
-        # Creating an instance of Nominatim Class
-        geolocator = Nominatim(user_agent="my_request")
+    # Creating an instance of Nominatim Class
+    geolocator = geopy.geocoders.Nominatim(user_agent="my_request")
 
-        # applying the rate limiter wrapper
-        geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+    # applying the rate limiter wrapper
+    geocode = geopy.extra.rate_limiter(geolocator.geocode, min_delay_seconds=1)
 
-        # Applying the method to pandas DataFrame
-        df_new['location'] = df_new['add'].apply(geocode)
-        df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
-        df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
-        return df_new
-
-
-    df_new = get_address(50000)
+    # Applying the method to pandas DataFrame
+    df_new['location'] = df_new['add'].apply(geocode)
+    df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
+    df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
+    st.write(df_new)
