@@ -59,7 +59,10 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
         st.write(df)
-
+    if st.checkbox("Сколько в школе приезров/победителей", False):
+        st.subheader('Рейтинг')
+        dict1 = df.groupby('ShortName').aggregate(np.sum)['Add'].to_dict()
+        st.write(dict1)
     st.title('Описание параметров датасета')
     if st.sidebar.checkbox('Формат данных'):
         st.subheader('Формат данных:')
@@ -131,8 +134,7 @@ with st.echo(code_location='below'):
 
     m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
     FastMarkerCluster(
-        data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]
-        , name='Заказы').add_to(m)
+        data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]).add_to(m)
 
     folium_static(m)
 
