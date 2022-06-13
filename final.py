@@ -125,8 +125,8 @@ with st.echo(code_location='below'):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
 
-        st.write(df_new['lat'])
-        st.write(df_new['lon'])
+        # st.write(df_new['lat'])
+        # st.write(df_new['lon'])
 
         m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
         FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]).add_to(m)
