@@ -123,71 +123,19 @@ with st.echo(code_location='below'):
     dist = get_distance()
     df['distance_from_center'] = dist
 
-
-    @st.cache()
-    def get_districts():
-        # Здесь мы получаем данные о полигонах московских административных округов и районов
-        # source (http://osm-boundaries.com)
-
-        districts_df = geopandas.read_file(
-            'https://drive.google.com/file/d/1dUazgN1VCYcBCEi09cNeJfReNmnU_jmw/view?usp=sharing')
-        moscow = geopandas.read_file(
-            'https://drive.google.com/file/d/1DM1zXVsMDt_T8F_iCIAU_oAFeTM3Pw0E/view?usp=sharing')
-        okruga = geopandas.read_file(
-            'https://drive.google.com/file/d/1yK8Si_Hq7W5Cak79a7XQ5yt0TFEuBLiH/view?usp=sharing')
-        moscow_geometry = list(moscow['geometry'])[0]
-        moscow_districts = pd.DataFrame()
-        idx = 0
-        for name, poly in zip(districts_df['local_name'], districts_df['geometry']):
-            if moscow_geometry.contains(poly):
-                for okr, geo in zip(okruga['local_name'], okruga['geometry']):
-                    if geo.contains(poly):
-                        moscow_districts.at[idx, 'okrug'] = okr
-                        moscow_districts.at[idx, 'district'] = name
-                        moscow_districts.at[idx, 'geometry'] = poly
-            else:
-                continue
-            idx += 1
-        return moscow_districts
-
-
-    moscow_geometry_df = get_districts()
-
-
     def get_coords(lat, long):
         return Point(long, lat)
 
 
     df['coords'] = df[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
 
-
-    @st.cache(allow_output_mutation=True)
-    def get_municipality():
-        new_df = df.copy(deep=True)
-        for idx, row in new_df.iterrows():
-            coord = row.coords
-            for distr, okr, geometry in zip(moscow_geometry_df['district'], moscow_geometry_df['okrug'],
-                                            moscow_geometry_df['geometry']):
-                if geometry.contains(coord):
-                    new_df.at[idx, 'district'] = distr
-                    new_df.at[idx, 'okrug'] = okr
-                    break
-                else:
-                    continue
-        return new_df
-
-
-    full_df = get_municipality()
-
     m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
     FastMarkerCluster(
-        data=[[lat, lon] for lat, lon in zip(full_df['lat'], full_df['long'])]
+        data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]
         , name='Заказы').add_to(m)
 
     folium_static(m)
 
-    df_municipalities = full_df.groupby(['district'], as_index=False).agg({'id': 'count', 'amount_charged': 'mean'})
-    df_municipalities
 
 
 
