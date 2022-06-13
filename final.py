@@ -111,35 +111,36 @@ with st.echo(code_location='below'):
     def get_distance():
         distance_from_c = []
         for lat, long in zip(df['lat'], df['long']):
-            distance_from_c.append(distance.distance((lat, long), (55,558741, 37,378847)).km)
+            distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
         return pd.Series(distance_from_c)
 
-    def get_coords(lat, long):
-        return Point(long, lat)
+
+    @st.cache(persist=True, show_spinner=True)
+    def get_dist(rows):
+        data_url = (
+            "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
+        df = pd.read_csv(data_url, nrows=rows)
+        return df
 
     if st.checkbox("Показать геоданные", False):
         st.subheader('Геоданные')
-        df_new = get_data(50000)
-
-        df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
-
-        m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
-        FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
-        folium_static(m)
-        if st.checkbox("Показать расстояние до центра", False):
-            st.subheader('Расстояние до центра')
-            dist = get_distance()
-            df_new['distance_from_center'] = dist
-            st.write(df_new)
-            st.write("С помощью Numpy ")
-            punk = df_new['distance_from_center'].to_numpy()
-            best_solution = np.mean(punk)
-            st.write(best_solution)
+        dist = get_distance()
+        df_new = get_dist(50000)
+        df_new['distance_from_center'] = dist
 
 
+        def get_coords(lat, long):
+            return Point(long, lat)
+
+    punk = df_new['distance_from_center'].to_numpy()
+    best_solution = np.mean(punk)
+    st.write(best_solution)
 
 
+    df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
 
+    m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
+    FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
 
-
+    folium_static(m)
 
