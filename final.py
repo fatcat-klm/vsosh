@@ -127,4 +127,19 @@ with st.echo(code_location='below'):
     df['distance_from_center'] = dist
 
     punk = df['distance_from_center'].to_numpy()
-    st.write(punk)
+    best_solution = np.mean(punk)
+    st.write(best_solution)
+
+
+    def get_coords(lat, long):
+        return Point(long, lat)
+
+
+    df['coords'] = df[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
+
+    m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
+    FastMarkerCluster(
+        data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]).add_to(m)
+
+    folium_static(m)
+
