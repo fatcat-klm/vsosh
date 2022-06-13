@@ -26,7 +26,7 @@ with st.echo(code_location='below'):
         return df
 
 
-    df = get_data(1790)
+    df = get_data(519)
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
     st.markdown("### Что-то про  шоколад")
