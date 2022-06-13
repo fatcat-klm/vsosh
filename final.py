@@ -28,6 +28,8 @@ with st.echo(code_location='below'):
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
     st.markdown("### Что-то про  шоколад")
+    img_1 = "https://github.com/fatcat-klm/vsosh/blob/main/e65ea183f8fac51d87ac25e68176f1b9.jpg"
+    st.image(img_1, width=500)
     st.markdown("Что-то прикольное паро шоколад пишем")
     if st.button("🎈"):
         st.balloons()
@@ -119,10 +121,8 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать граф", False):
         df2 = df.copy(deep=True)
         df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
-        # df3 = df3.groupby(['Company_Location'], as_index=False)
         G = nx.Graph()
         G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
-        # figure(figsize=(10, 8))
         fig, ax = plt.subplots()
         nx.draw_shell(G, with_labels=True)
         st.pyplot(fig)
@@ -143,9 +143,6 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать геоданные", False):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
-
-        # st.write(df_new['lat'])
-        # st.write(df_new['lon'])
 
         m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
         FastMarkerCluster(
