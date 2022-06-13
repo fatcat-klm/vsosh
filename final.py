@@ -97,12 +97,13 @@ with st.echo(code_location='below'):
         "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
 
     st.markdown("Граф")
-    df2 = df.copy(deep=True)
-    df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
-    G = nx.Graph()
-    G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
-    figure(figsize=(10, 8))
-    nx.draw_shell(G, with_labels=True)
+    if st.checkbox("Показать граф", False):
+        df2 = df.copy(deep=True)
+        df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
+        G = nx.Graph()
+        G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
+        figure(figsize=(10, 8))
+        nx.draw_shell(G, with_labels=True)
 
     st.title('Геоданные')
 
@@ -116,6 +117,8 @@ with st.echo(code_location='below'):
         d = df.drop(['coords'], axis=1).copy(deep=True)
         return d
     df_new = final_df()
+
+
     if st.checkbox("Показать геоданные", False):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
