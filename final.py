@@ -126,6 +126,8 @@ with st.echo(code_location='below'):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
 
+        st.write(df_new['lat'])
+        
         df_new['coords'] = df_new[['lat', 'lon']].apply(lambda x: get_coords(*x), axis=1)
         df_new = df_new.drop(['coords'], axis=1).copy(deep=True)
 
