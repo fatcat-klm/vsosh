@@ -1,14 +1,15 @@
 import matplotlib
 import folium as folium
-from folium.plugins import FastMarkerCluster
 import streamlit as st
 import pandas as pd
 import numpy as np
 import seaborn as sns
+from folium.plugins import FastMarkerCluster
 from geopy import distance
-from shapely.geometry import Point
 import networkx as nx
 from matplotlib.pyplot import figure
+from shapely.geometry import Point
+from streamlit_folium import st_folium, folium_static
 import plotly.express as px
 from geopy.geocoders import Nominatim
 
@@ -20,7 +21,7 @@ with st.echo(code_location='below'):
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
         data_url = (
-            "https://github.com/fatcat-klm/vsosh/raw/main/flavors_of_cacao%20(2)%20-%20flavors_of_cacao%20(2).csv.zip")
+            "https://github.com/fatcat-klm/vsosh/raw/main/flavors_of_cacao%20(2)%20-%20flavors_of_cacao%20(2)%20(1).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
@@ -97,10 +98,25 @@ with st.echo(code_location='below'):
 
     st.markdown("Граф")
     df2 = df.copy(deep=True)
-    df3 = df2[['Specific Bean Origin or Bar Name', 'Company Location']]
+    df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
     G = nx.Graph()
-    G = nx.from_pandas_edgelist(df3, 'Specific Bean Origin or Bar Name', 'Company Location')
+    G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
     figure(figsize=(10, 8))
     nx.draw_shell(G, with_labels=True)
 
-    st.markdown("Геоданные")
+    st.title('Геоданные')
+
+
+    def get_coords(lat, long):
+        return Point(long, lat)
+
+
+    if st.checkbox("Показать геоданные", False):
+        st.subheader('Геоданные')
+        df_new = df.copy(deep=True)
+
+        df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
+
+        m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
+        FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
+        folium_static(m)
