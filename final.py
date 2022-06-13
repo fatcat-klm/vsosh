@@ -119,7 +119,7 @@ with st.echo(code_location='below'):
     if st.checkbox("Показать граф", False):
         df2 = df.copy(deep=True)
         df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
-        df3 = df3.groupby(['Specific_Bean_Origin', 'Company_Location'], as_index=False)
+        df3 = df3.groupby(['Company_Location'], as_index=False)
         G = nx.Graph()
         G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
         # figure(figsize=(10, 8))
