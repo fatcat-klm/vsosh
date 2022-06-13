@@ -26,7 +26,7 @@ with st.echo(code_location='below'):
         return df
 
 
-    df = get_data(519)
+    df = get_data(500)
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
     st.markdown("### Что-то про  шоколад")
@@ -129,8 +129,8 @@ with st.echo(code_location='below'):
         st.write(df_new['lat'])
         st.write(df_new['lon'])
 
-        df_new['coords'] = df_new[['lat', 'lon']].apply(lambda x: get_coords(*x), axis=1)
-        df_new = df_new.drop(['coords'], axis=1).copy(deep=True)
+        # df_new['coords'] = df_new[['lat', 'lon']].apply(lambda x: get_coords(*x), axis=1)
+        # df_new = df_new.drop(['coords'], axis=1).copy(deep=True)
 
         m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
         FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]).add_to(m)
