@@ -1,21 +1,17 @@
 import matplotlib
 import folium as folium
-from folium.plugins import MarkerCluster, FastMarkerCluster
+from folium.plugins import FastMarkerCluster
 import streamlit as st
 import pandas as pd
 from streamlit_folium import st_folium, folium_static
 import numpy as np
 import seaborn as sns
-import altair as alt
-import geopandas
 from geopy import distance
-from shapely.geometry import Point, MultiPolygon
-from shapely.wkt import dumps, loads
+from shapely.geometry import Point
 
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
     st.set_option('deprecation.showPyplotGlobalUse', False)
-
 
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
@@ -27,7 +23,6 @@ with st.echo(code_location='below'):
     df = get_data(50000)
 
     st.sidebar.subheader('Описание параметров датасета')
-    st.sidebar.subheader('Анализировать данные')
 
     st.markdown("### Анализ результатов участия московских школ во Всероссийской и Московской Олимпиаде Школьников")
     img_1 = "https://github.com/fatcat-klm/vsosh/raw/main/%D0%B2%D1%81%D0%BE%D1%88%20%D0%BB%D0%BE%D0%B3%D0%BE.jpg"
@@ -48,8 +43,10 @@ with st.echo(code_location='below'):
         st.subheader('Датасет')
         st.write(df)
 
-    if st.checkbox("Сколько в школе призеров/победителей", False):
+    st.title('Описание параметров датасета')
+    if st.sidebar.checkbox('Рейтинг школ'):
         st.subheader('Рейтинг')
+        st.write("С помощью библиотек Numpy и Pandas отсортируем все школы по общесму количествву призеров за все года и создадим отдельные словари")
         dict1 = df.groupby('ShortName').aggregate(np.sum)['Add'].to_dict()
         sorted_values = sorted(dict1.values())
         new_sorted_dict = {}
@@ -59,8 +56,6 @@ with st.echo(code_location='below'):
                     new_sorted_dict[j] = dict1[j]
                     break
         st.write(new_sorted_dict)
-
-    st.title('Описание параметров датасета')
     if st.sidebar.checkbox('Формат данных'):
         st.subheader('Формат данных:')
         st.write(df.head())
@@ -72,6 +67,7 @@ with st.echo(code_location='below'):
         st.write(df.describe())
 
     st.title('Анализировать данные')
+    st.sidebar.subheader('Анализировать данные')
     st.sidebar.markdown("## Меняйте параметры модели, чтобы создать интересующие вас визуализации данных")
     st.info(
         "Если при построении выдается ошибка, то формат выбранного параметра не подходит для построения графика такого типа. Выберите другой")
@@ -110,15 +106,13 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
+    st.title('Геоданные')
     @st.cache()
     def get_distance():
         distance_from_c = []
         for lat, long in zip(df['lat'], df['long']):
             distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
         return pd.Series(distance_from_c)
-
-
-    dist = get_distance()
 
 
     @st.cache(persist=True, show_spinner=True)
@@ -128,22 +122,25 @@ with st.echo(code_location='below'):
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
-    df_new = get_dist(50000)
-    df_new['distance_from_center'] = dist
+    def get_coords(lat, long):
+        return Point(long, lat)
+
+    if st.checkbox("Показать геоданные", False):
+        st.subheader('Геоданные')
+        dist = get_distance()
+        df_new = get_dist(50000)
+        df_new['distance_from_center'] = dist
+
+        df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
+
+        m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
+        FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
+        folium_static(m)
 
     punk = df_new['distance_from_center'].to_numpy()
     best_solution = np.mean(punk)
     st.write(best_solution)
 
 
-    def get_coords(lat, long):
-        return Point(long, lat)
 
-
-    df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
-
-    m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
-    FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df['long'])]).add_to(m)
-
-    folium_static(m)
 
