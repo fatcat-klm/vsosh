@@ -25,9 +25,10 @@ with st.echo(code_location='below'):
         return df
 
     df = get_data(1790)
-    st.sidebar.subheader('Описание параметров датасета')
+    st.sidebar.header('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
-    st.title("### Рейтинг шоколада по данным Британских учёных")
+    st.write("Если играться в меню слева, то на этом месте будут строиться графики (или не будут)")
+    st.title("Рейтинг шоколада по данным Британских учёных")
     img_1 = "https://github.com/fatcat-klm/vsosh/blob/main/e65ea183f8fac51d87ac25e68176f1b9.jpg?raw=true"
     st.image(img_1, width=500)
     st.markdown("Все больше и больше людей сейчас переезжает из России в другие страны. При миграциии люди сталкиваются с неожиданными проблемами. Например, какой шоколад есть в Америке, если родненькой 'Алёнки' нет на прилавке? Преисполниться и узнать все о рейтинге различного шоколада вам поможет этот проект! ")
@@ -53,6 +54,7 @@ with st.echo(code_location='below'):
                     new_sorted_dict[j] = dict1[j]
                     break
         st.write(new_sorted_dict)
+        st.write("Восторг! Хочется обратить внимание, что тут мы использовали Numpy, да-да. Поулчили словарь, где у каждой компании мы знаем, сколько различных шоколадок попало в топ-1790 лучших.")
 
     st.title('Описание параметров датасета')
     if st.sidebar.checkbox('Формат данных'):
@@ -65,7 +67,7 @@ with st.echo(code_location='below'):
         st.subheader('Статистически описываемые данные')
         st.write(df.describe())
     st.title('Анализировать данные')
-    st.sidebar.markdown(
+    st.sidebar.subheader(
         "## Меняйте параметры модели, чтобы создать интересующие вас визуализации данных, но аккуратно."
     )
     st.info(
@@ -113,9 +115,7 @@ with st.echo(code_location='below'):
         column_pair_plot = st.sidebar.selectbox("X дополнительная переменная:)", df.columns)
         fig = sns.pairplot(df, hue=column_pair_plot, palette="husl")
         st.pyplot()
-    st.sidebar.markdown(
-        "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)"
-    )
+    st.sidebar.markdown("[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
 
     st.title("Граф")
     if st.checkbox("Показать граф", False):
@@ -143,7 +143,7 @@ with st.echo(code_location='below'):
         st.subheader('Геоданные')
         df_new = df.copy(deep=True)
 
-        m = folium.Map(location=[49.867124, 9.692097], zoom_start=100)
+        m = folium.Map(location=[49.867124, 9.692097], zoom_start=5)
         FastMarkerCluster(
             data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]
         ).add_to(m)
