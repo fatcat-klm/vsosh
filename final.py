@@ -123,8 +123,13 @@ with st.echo(code_location='below'):
             # geometry.append(Point(lon, lat))
         return pd.Series(distance_from_c)
 
+
     dist = get_distance()
     df['distance_from_center'] = dist
+
+    punk = df['distance_from_center'].to_numpy()
+    st.write(punk)
+
 
     def get_coords(lat, long):
         return Point(long, lat)
@@ -137,7 +142,3 @@ with st.echo(code_location='below'):
         data=[[lat, lon] for lat, lon in zip(df['lat'], df['long'])]).add_to(m)
 
     folium_static(m)
-
-
-
-
