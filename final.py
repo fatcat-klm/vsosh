@@ -116,7 +116,7 @@ with st.echo(code_location='below'):
     def final_df():
         d = df.drop(['coords'], axis=1).copy(deep=True)
         return d
-    df_new = final_df()
+    # df_new = final_df()
 
 
     if st.checkbox("Показать геоданные", False):
