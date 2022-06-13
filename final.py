@@ -12,7 +12,7 @@ with st.echo(code_location='below'):
         data_url = (
             "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
-        return df 
+        return df
 
     df = get_data(50000)
 
@@ -94,7 +94,7 @@ with st.echo(code_location='below'):
 
     # Creating a dataframe with address of locations we want to reterive
     #locat = ['Coorg, Karnataka', 'Khajjiar, Himachal Pradesh', \
-             'Chail, Himachal Pradesh', 'Pithoragarh, Uttarakhand', 'Munnar, Kerala']
+    #        'Chail, Himachal Pradesh', 'Pithoragarh, Uttarakhand', 'Munnar, Kerala']
     #df = pd.DataFrame({'add': locat})
 
     # Creating an instance of Nominatim Class
