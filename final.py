@@ -16,7 +16,7 @@ with st.echo(code_location='below'):
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
         data_url = (
-            "https://github.com/fatcat-klm/vsosh/raw/main/flavors_of_cacao%20(2).csv.zip")
+            "https://github.com/fatcat-klm/vsosh/raw/main/flavors_of_cacao%20(2)%20-%20flavors_of_cacao%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
