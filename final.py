@@ -9,6 +9,8 @@ from geopy import distance
 from shapely.geometry import Point
 import networkx as nx
 from matplotlib.pyplot import figure
+import plotly.express as px
+from geopy.geocoders import Nominatim
 
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
@@ -27,8 +29,7 @@ with st.echo(code_location='below'):
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
     st.markdown("### Что-то про  шоколад")
-    st.markdown(
-        "Что-то прикольное паро шоколад пишем")
+    st.markdown("Что-то прикольное паро шоколад пишем")
     if st.button("🎈"):
         st.balloons()
     st.markdown(
@@ -93,9 +94,13 @@ with st.echo(code_location='below'):
         st.pyplot()
     st.sidebar.markdown(
         "[Источник исходного датасета](https://www.kaggle.com/datasets/rtatman/chocolate-bar-ratings)")
-    df2 = df1.copy(deep=True)
-    df2 = df2[['Specific Bean Origin or Bar Name', 'Company Location']]
+
+    st.markdown("Граф")
+    df2 = df.copy(deep=True)
+    df3 = df2[['Specific Bean Origin or Bar Name', 'Company Location']]
     G = nx.Graph()
-    G = nx.from_pandas_edgelist(df2, 'Specific Bean Origin or Bar Name', 'Company Location')
+    G = nx.from_pandas_edgelist(df3, 'Specific Bean Origin or Bar Name', 'Company Location')
     figure(figsize=(10, 8))
     nx.draw_shell(G, with_labels=True)
+
+    st.markdown("Геоданные")
