@@ -1,9 +1,11 @@
 from geopy.extra.rate_limiter import RateLimiter
-import geopy.geocoders
 import matplotlib
-import pandas as pd
 import seaborn as sns
 import streamlit as st
+import pandas as pd
+import seaborn as sns
+import altair as alt
+from geopy import distance
 
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
@@ -13,9 +15,9 @@ with st.echo(code_location='below'):
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
         data_url = (
-            "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20"
-            "-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20("
-            "2).csv.zip")
+            "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20"
+            "-%20winners%20-%20moscow%20schools%20-%20winners%20("
+            "2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
@@ -95,22 +97,17 @@ with st.echo(code_location='below'):
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
 
-    @st.cache(persist=True, show_spinner=True)
-    def get_address(rows):
-        data_url = (
-            "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20"
-            "-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20("
-            "2).csv.zip")
-        df_new = pd.read_csv(data_url, nrows=rows)
-        return df_new
+    @st.cache()
+    def get_distance():
+        # Добавляем расстояние до центра Москвы
+        distance_from_c = []
+        for lat, long in zip(df['lat'], df['long']):
+            distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
+            # geometry.append(Point(lon, lat))
+        return pd.Series(distance_from_c)
+
+    dist = get_distance()
+    df['distance_from_center'] = dist
 
 
-    df_new = get_address(50000)
-    geolocator = geopy.geocoders.Nominatim(user_agent="my_request")
-    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
-    df_new['location'] = df_new['ShortName'].apply(geocode)
-    df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
-    df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
-    if st.checkbox("Показать датасет up", False):
-        st.subheader('Датасет up')
-        st.write(df_new)
+
