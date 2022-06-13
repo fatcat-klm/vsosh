@@ -94,8 +94,9 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
+    locat = ['Coorg, Karnataka', 'Khajjiar, Himachal Pradesh', \
+             'Chail, Himachal Pradesh', 'Pithoragarh, Uttarakhand', 'Munnar, Kerala']
 
-    locat = df.query('df_ShortName')
     df_new = pd.DataFrame({'add': locat})
 
     # Creating an instance of Nominatim Class
