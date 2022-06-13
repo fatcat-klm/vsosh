@@ -152,3 +152,4 @@ with st.echo(code_location='below'):
         ).add_to(m)
         folium_static(m)
     st.title("Исходный код")
+    st.write("Тут есть Pandas, визуализации, Numpy, streamlit, folium, networkx, много строк, общая тема, и шутки, которые компенсируют плохие графики. Теперь можем и отдохнуть <3")
