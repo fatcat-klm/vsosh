@@ -17,6 +17,7 @@ with st.echo(code_location='below'):
             "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
+
     df = get_data(50000)
     st.sidebar.subheader('Описание параметров датасета')
     st.sidebar.subheader('Анализировать данные')
@@ -90,24 +91,29 @@ with st.echo(code_location='below'):
         "[Источник исходного датасета](https://www.kaggle.com/datasets/romazepa/moscow-schools-winners-of-educational-olympiads?resource=download)")
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
-    @st.cache()
-    def get_distance():
-        distance_from_c = []
-        for lat, long in zip(df['lat'], df['long']):
-            distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
-        return pd.Series(distance_from_c)
-    dist = get_distance()
+
+
     @st.cache(persist=True, show_spinner=True)
     def get_dist(rows):
         data_url = (
             "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
+
     df_new = get_dist(50000)
+
+    def get_distance():
+        distance_from_c = []
+        for lat, long in zip(df_new['lat'], df_new['long']):
+            distance_from_c.append(distance.distance((lat, long), (55.753544, 37.621211)).km)
+        return pd.Series(distance_from_c)
+
+    dist = get_distance()
     df_new['distance_from_center'] = dist
     punk = df_new['distance_from_center'].to_numpy()
     best_solution = np.mean(punk)
     st.write(best_solution)
+    
     def get_coords(lat, long):
         return Point(long, lat)
     df_new['coords'] = df_new[['lat', 'long']].apply(lambda x: get_coords(*x), axis=1)
