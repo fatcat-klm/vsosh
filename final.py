@@ -1,16 +1,13 @@
 import matplotlib
 import folium as folium
-from folium.plugins import MarkerCluster, FastMarkerCluster
+from folium.plugins import FastMarkerCluster
 import streamlit as st
 import pandas as pd
 from streamlit_folium import st_folium, folium_static
 import numpy as np
 import seaborn as sns
-import altair as alt
-import geopandas
 from geopy import distance
-from shapely.geometry import Point, MultiPolygon
-from shapely.wkt import dumps, loads
+from shapely.geometry import Point
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
     st.set_option('deprecation.showPyplotGlobalUse', False)
