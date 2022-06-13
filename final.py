@@ -109,7 +109,10 @@ with st.echo(code_location='below'):
 
 
     def get_coords(lat, lon):
-        return Point(lon, lat)
+        try:
+            return Point(lon, lat)
+        except Exception as e:
+            raise ValueError('get_coords: {} {}'.format(lat, lon))
 
 
     @st.experimental_singleton()
@@ -125,7 +128,7 @@ with st.echo(code_location='below'):
 
         df_new['coords'] = df_new[['lat', 'lon']].apply(lambda x: get_coords(*x), axis=1)
         df_new = df_new.drop(['coords'], axis=1).copy(deep=True)
-        
+
         m = folium.Map(location=[55.753544, 37.621211], zoom_start=10)
         FastMarkerCluster(data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]).add_to(m)
         folium_static(m)
