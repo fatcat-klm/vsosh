@@ -94,10 +94,23 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
-    df_new = df
+
+    @st.cache(persist=True, show_spinner=True)
+    def get_address(rows):
+        data_url = (
+            "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20"
+            "-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20("
+            "2).csv.zip")
+        df_new = pd.read_csv(data_url, nrows=rows)
+        return df_new
+
+
+    df_new = get_address(50000)
     geolocator = geopy.geocoders.Nominatim(user_agent="my_request")
     geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
     df_new['location'] = df_new['ShortName'].apply(geocode)
     df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
     df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
-    st.write(df_new)
+    if st.checkbox("Показать датасет up", False):
+        st.subheader('Датасет up')
+        st.write(df_new)
