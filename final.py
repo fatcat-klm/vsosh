@@ -3,9 +3,11 @@ import pandas as pd
 from PIL import Image
 import matplotlib
 import seaborn as sns
+
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
     st.set_option('deprecation.showPyplotGlobalUse', False)
+
 
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
@@ -13,6 +15,7 @@ with st.echo(code_location='below'):
             "https://github.com/fatcat-klm/vsosh2.0/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
+
 
     df = get_data(50000)
 
@@ -51,21 +54,24 @@ with st.echo(code_location='below'):
 
     st.title('Анализировать данные')
     st.sidebar.markdown("## Меняйте параметры модели, чтобы создать интересующие вас визуализации данных")
-    st.info("Если при построении выдается ошибка, то формат выбранного параметра не подходит для построения графика такого типа. Выберите другой")
+    st.info(
+        "Если при построении выдается ошибка, то формат выбранного параметра не подходит для построения графика такого типа. Выберите другой")
     if st.sidebar.checkbox('Count Plot'):
         st.subheader('Count Plot')
         column_count_plot_x = st.sidebar.selectbox("Х Подходят только числовые значения: ", df.columns)
         column_count_plot_y = st.sidebar.selectbox("Y дополнительная переменная:",
-                                       df.columns.insert(0, None))
-        fig = sns.countplot(x=column_count_plot_x, hue=column_count_plot_y, data=df, palette="husl", labels=[df.columns.insert(0, None)])
+                                                   df.columns.insert(0, None))
+        fig = sns.countplot(x=column_count_plot_x, hue=column_count_plot_y, data=df, palette="husl",
+                            labels=[df.columns.insert(0, None)])
         st.pyplot()
 
     if st.sidebar.checkbox('Boxplot'):
         st.subheader('Boxplot')
-        column_box_plot_X = st.sidebar.selectbox("X Подходят только числовые значения:",df.columns)
-        column_box_plot_Y = st.sidebar.selectbox("Y: ",df.columns.insert(0, None))
+        column_box_plot_X = st.sidebar.selectbox("X Подходят только числовые значения:", df.columns)
+        column_box_plot_Y = st.sidebar.selectbox("Y: ", df.columns.insert(0, None))
         column_box_plot_Z = st.sidebar.selectbox("Z дополнительная переменная:", df.columns.insert(0, None))
-        fig = sns.boxplot(x=column_box_plot_X, y=column_box_plot_Y, hue=column_box_plot_Z, data=df, palette="husl", labels=[df.columns.insert(0, None)])
+        fig = sns.boxplot(x=column_box_plot_X, y=column_box_plot_Y, hue=column_box_plot_Z, data=df, palette="husl",
+                          labels=[df.columns.insert(0, None)])
         st.pyplot()
 
     if st.sidebar.checkbox('Distplot'):
@@ -84,28 +90,22 @@ with st.echo(code_location='below'):
         "[Источник исходного датасета](https://www.kaggle.com/datasets/romazepa/moscow-schools-winners-of-educational-olympiads?resource=download)")
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
-    df_group_for_address = df.query('df_Year=="2019/2020"').query('df_Stage=="4"').groupby(['df_ShortName', 'Subject'], as_index=False)['df_Add'].sum()
-    st.write(df_group_for_address)
 
-    ## Importing the required modules
     import pandas as pd
     from geopy.geocoders import Nominatim
     from geopy.extra.rate_limiter import RateLimiter
 
-    # Creating a dataframe with address of locations we want to reterive
-    #locat = ['Coorg, Karnataka', 'Khajjiar, Himachal Pradesh', \
-    #        'Chail, Himachal Pradesh', 'Pithoragarh, Uttarakhand', 'Munnar, Kerala']
-    #df = pd.DataFrame({'add': locat})
+    locat = df.query('df_ShortName')
+    df_new = pd.DataFrame({'add': locat})
 
     # Creating an instance of Nominatim Class
-    #geolocator = Nominatim(user_agent="my_request")
+    geolocator = Nominatim(user_agent="my_request")
 
     # applying the rate limiter wrapper
-    #geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
 
     # Applying the method to pandas DataFrame
-    #df['location'] = df['add'].apply(geocode)
-    #df['Lat'] = df['location'].apply(lambda x: x.latitude if x else None)
-    ##df['Lon'] = df['location'].apply(lambda x: x.longitude if x else None)
-    #
-    #  df
+    df_new['location'] = df_new['add'].apply(geocode)
+    df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
+    df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
+    st.write(df_new)
