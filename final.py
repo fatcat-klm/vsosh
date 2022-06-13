@@ -1,4 +1,5 @@
-import matplotlib
+import matplotlib 
+import matplotlib.pyplot as plt
 import folium as folium
 import streamlit as st
 import pandas as pd
@@ -102,8 +103,10 @@ with st.echo(code_location='below'):
         df3 = df2[['Specific_Bean_Origin', 'Company_Location']]
         G = nx.Graph()
         G = nx.from_pandas_edgelist(df3, 'Specific_Bean_Origin', 'Company_Location')
-        figure(figsize=(10, 8))
+        # figure(figsize=(10, 8))
+        fig, ax = plt.subplots()
         nx.draw_shell(G, with_labels=True)
+        st.pyplot(fig)
 
     st.title('Геоданные')
 
