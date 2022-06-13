@@ -1,8 +1,16 @@
+import matplotlib
+import folium as folium
+from folium.plugins import MarkerCluster, FastMarkerCluster
 import streamlit as st
 import pandas as pd
-from PIL import Image
-import matplotlib
+from streamlit_folium import st_folium, folium_static
+import numpy as np
 import seaborn as sns
+import altair as alt
+import geopandas
+from geopy import distance
+from shapely.geometry import Point, MultiPolygon
+from shapely.wkt import dumps, loads
 with st.echo(code_location='below'):
     matplotlib.use("Agg")
     st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -10,7 +18,7 @@ with st.echo(code_location='below'):
     @st.cache(persist=True, show_spinner=True)
     def get_data(rows):
         data_url = (
-            "https://github.com/fatcat-klm/vsosh/raw/main/moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
+            "https://github.com/fatcat-klm/vsosh/raw/main/%D0%9A%D0%BE%D0%BF%D0%B8%D1%8F%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2)%20-%20moscow%20schools%20-%20winners%20-%20moscow%20schools%20-%20winners%20(2).csv.zip")
         df = pd.read_csv(data_url, nrows=rows)
         return df
 
@@ -84,3 +92,28 @@ with st.echo(code_location='below'):
         "[Источник исходного датасета](https://www.kaggle.com/datasets/romazepa/moscow-schools-winners-of-educational-olympiads?resource=download)")
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
+    df_group_for_address = df.query('df_Year=="2019/2020"').query('df_Stage=="4"').groupby(['df_ShortName', 'Subject'], as_index=False)['df_Add'].sum()
+    st.write(df_group_for_address)
+
+    ## Importing the required modules
+    import pandas as pd
+    from geopy.geocoders import Nominatim
+    from geopy.extra.rate_limiter import RateLimiter
+
+    # Creating a dataframe with address of locations we want to reterive
+    #locat = ['Coorg, Karnataka', 'Khajjiar, Himachal Pradesh', \
+             'Chail, Himachal Pradesh', 'Pithoragarh, Uttarakhand', 'Munnar, Kerala']
+    #df = pd.DataFrame({'add': locat})
+
+    # Creating an instance of Nominatim Class
+    #geolocator = Nominatim(user_agent="my_request")
+
+    # applying the rate limiter wrapper
+    #geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+
+    # Applying the method to pandas DataFrame
+    #df['location'] = df['add'].apply(geocode)
+    #df['Lat'] = df['location'].apply(lambda x: x.latitude if x else None)
+    ##df['Lon'] = df['location'].apply(lambda x: x.longitude if x else None)
+    #
+    #  df
