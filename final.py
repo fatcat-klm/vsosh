@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from geopy.geocoders import Nominatim
+from geopy.extra.rate_limiter import RateLimiter
 from PIL import Image
 import matplotlib
 import seaborn as sns
@@ -91,4 +93,23 @@ with st.echo(code_location='below'):
     st.sidebar.markdown(
         "[Программа на основе](https://github.com/maladeep/palmerpenguins-streamlit-eda)")
 
-    
+
+    @st.cache(persist=True, show_spinner=True)
+    def get_address(rows):
+        locat = df.query('df_ShortName')
+        df_new = pd.DataFrame({'add': locat})
+
+        # Creating an instance of Nominatim Class
+        geolocator = Nominatim(user_agent="my_request")
+
+        # applying the rate limiter wrapper
+        geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+
+        # Applying the method to pandas DataFrame
+        df_new['location'] = df_new['add'].apply(geocode)
+        df_new['Lat'] = df_new['location'].apply(lambda x: x.latitude if x else None)
+        df_new['Lon'] = df_new['location'].apply(lambda x: x.longitude if x else None)
+        return df_new
+
+
+    df_new = get_address(50000)
