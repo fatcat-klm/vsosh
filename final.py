@@ -151,4 +151,4 @@ with st.echo(code_location='below'):
             data=[[lat, lon] for lat, lon in zip(df_new['lat'], df_new['lon'])]
         ).add_to(m)
         folium_static(m)
-        st.title("Исходный код")
+    st.title("Исходный код")
