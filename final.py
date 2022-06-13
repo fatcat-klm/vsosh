@@ -25,9 +25,7 @@ with st.echo(code_location='below'):
         return df
 
     df = get_data(1790)
-    st.sidebar.header('Описание параметров датасета')
-    st.sidebar.subheader('Анализировать данные')
-    st.write("Если играться в меню слева, то на этом месте будут строиться графики (или не будут)")
+    st.sidebar.subheader('Описание параметров датасета')
     st.title("Рейтинг шоколада по данным Британских учёных")
     img_1 = "https://github.com/fatcat-klm/vsosh/blob/main/e65ea183f8fac51d87ac25e68176f1b9.jpg?raw=true"
     st.image(img_1, width=500)
@@ -37,7 +35,7 @@ with st.echo(code_location='below'):
     st.markdown(
         "Проанализировав различные характеристики датасета вы сможете выявить интересные зависимости рейтинга. Например, из каких бобов производят самый вкусный шоколад. "
     )
-    st.markdown(" ### Приступить к анализу данных")
+    st.title(" ### Приступить к анализу данных")
     if st.checkbox("Показать датасет", False):
         st.subheader('Датасет')
         st.write(df)
@@ -67,12 +65,15 @@ with st.echo(code_location='below'):
         st.subheader('Статистически описываемые данные')
         st.write(df.describe())
     st.title('Анализировать данные')
+    st.sidebar.header('Анализировать данные')
     st.sidebar.subheader(
-        "## Меняйте параметры модели, чтобы создать интересующие вас визуализации данных, но аккуратно."
+        "Меняйте параметры модели, чтобы создать интересующие вас визуализации данных, но аккуратно."
     )
+    st.markdown("Если играться в меню слева, то на этом месте будут строиться графики (или не будут)")
     st.info(
         "Не расстраивайтесь, если при построении выдается ошибка. Формат выбранного параметра не подходит для построения графика такого типа. Выберите другой"
     )
+
     if st.sidebar.checkbox('Count Plot'):
         st.subheader('Count Plot')
         column_count_plot_x = st.sidebar.selectbox(
